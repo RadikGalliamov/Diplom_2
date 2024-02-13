@@ -1,6 +1,3 @@
-import random
-import string
-
 
 class TestDataUrl:
     BASE_URL = ""
@@ -36,20 +33,13 @@ class TestDataLogin:
     }
 
 
-class TestDataChangingUserData:
-    pass
-    # random_numbers = ''.join(random.choices(string.digits, k=5))
-    #
-    # email = f"update_user_for_stellar{random_numbers}@yandex.ru"
-    # name = f"update_user_for_stellar{random_numbers}"
-    #
-    # user_update = {
-    #     "email": email,
-    #     "name": name
-    # }
-
-
 class TestCreateOrderData:
     ingredients = {
         "ingredients": ["61c0c5a71d1f82001bdaaa70", "61c0c5a71d1f82001bdaaa6e"]
+    }
+    invalid_ingredient_hash = {
+        "ingredients": ["61c0c5a71d1fbdaaa70231324324244"]
+    }
+    no_ingredients = {
+        "ingredients": [""]
     }

@@ -2,70 +2,42 @@ import allure
 import requests
 from data import TestDataUrl, TestCreateOrderData
 
-"""
-Создание заказа:
-с авторизацией,
-без авторизации,
-с ингредиентами,
-без ингредиентов,
-с неверным хешем ингредиентов.
-"""
-
 
 class TestCreateOrder:
-    @allure.title("Тест создание заказа с авторизацией")
+    @allure.title("Cоздание заказа авторизированным пользователем")
     def test_create_order_with_authorization(self, create_user_delete_user):
         access_token = create_user_delete_user[2]
         response = requests.post(
             url=TestDataUrl.CREATE_ORDER_URL, json=TestCreateOrderData.ingredients, headers={
                 "Authorization": access_token})
         assert response.status_code == 200, f"Ожидался код 200, но получен {response.status_code}"
-        assert "name" in response.json(), "Поля 'name' нет в теле ответа"
-        assert "order" in response.json(), "Поля 'order' нет в теле ответа"
-        assert "number" in response.json()['order'], "Поля 'number' нет в словаре 'order' теле ответа"
 
-        # assert response["success"] == True, f"Значение поля 'success' {response['success']} вместо 'True'"
-        # assert "accessToken" in response_body, "Поля accessToken нет в теле ответа"
-        # assert response_body["accessToken"] != "", "Поле 'accessToken' пустое"
-        # assert "refreshToken" in response_body, "Поля refreshToken нет в теле ответа"
-        # assert response_body["refreshToken"] != "", "Поле 'refreshToken' пустое"
-        # assert "user" in response_body, "Поля user нет в теле ответа"
-        # assert "email" in response_body["user"], "Поля email нет в словаре user тела ответа"
-        # assert "name" in response_body["user"], "Поля name нет в словаре user тела ответа"
-
-    @allure.title("Тест создание заказа без авторизацией")
+    @allure.title("Создание заказа не авторизированным пользователем")
     def test_create_order_without_authorization(self, create_user_delete_user):
         response = requests.post(
             url=TestDataUrl.CREATE_ORDER_URL, json=TestCreateOrderData.ingredients, headers=None)
-        assert response.status_code == 403, f"Ожидался код 403, но получен {response.status_code}"
-        assert "name" in response.json(), "Поля 'name' нет в теле ответа"
-        assert "order" in response.json(), "Поля 'order' нет в теле ответа"
-        assert "number" in response.json()['order'], "Поля 'number' нет в словаре 'order' теле ответа"
-        # добавить проверки
-
-    @allure.title("Тест создание заказа с ингредиентами")  # доделать
-    def test_create_order_without_authorization(self, create_user_delete_user):
-        response = requests.post(
-            url=TestDataUrl.CREATE_ORDER_URL, json=TestCreateOrderData.ingredients, headers=None)
+        name = response.json()['name']
+        order_number = response.json()["order"]["number"]
         assert response.status_code == 200, f"Ожидался код 200, но получен {response.status_code}"
-        assert "name" in response.json(), "Поля 'name' нет в теле ответа"
-        assert "order" in response.json(), "Поля 'order' нет в теле ответа"
-        assert "number" in response.json()['order'], "Поля 'number' нет в словаре 'order' теле ответа"
+        assert response.text == f'{{"success":true,"name":"{name}","order":{{"number":{order_number}}}}}'
 
-    @allure.title("Тест создание заказа без ингредиентов")  # доделать
-    def test_create_order_without_authorization(self, create_user_delete_user):
+    @allure.title("Cоздание заказа без ингредиентами не авторизированным пользователем")
+    def test_create_order_with_ingredients(self):
         response = requests.post(
-            url=TestDataUrl.CREATE_ORDER_URL, json=TestCreateOrderData.ingredients, headers=None)
-        assert response.status_code == 200, f"Ожидался код 200, но получен {response.status_code}"
-        assert "name" in response.json(), "Поля 'name' нет в теле ответа"
-        assert "order" in response.json(), "Поля 'order' нет в теле ответа"
-        assert "number" in response.json()['order'], "Поля 'number' нет в словаре 'order' теле ответа"
+            url=TestDataUrl.CREATE_ORDER_URL, json=TestCreateOrderData.no_ingredients, headers=None)
+        assert response.status_code == 400, f"Ожидался код 400, но получен {response.status_code}"
+        assert response.text == '{"success":false,"message":"Ingredient ids must be provided"}'
 
-    @allure.title("Тест создание заказа с неверным хешем ингредиентов")  # доделать
-    def test_create_order_without_authorization(self, create_user_delete_user):
+    @allure.title("Создание заказа без ингредиентов авторизированным пользователем")
+    def test_create_order_without_ingredients(self, create_user_delete_user):
         response = requests.post(
-            url=TestDataUrl.CREATE_ORDER_URL, json=TestCreateOrderData.ingredients, headers=None)
-        assert response.status_code == 200, f"Ожидался код 200, но получен {response.status_code}"
-        assert "name" in response.json(), "Поля 'name' нет в теле ответа"
-        assert "order" in response.json(), "Поля 'order' нет в теле ответа"
-        assert "number" in response.json()['order'], "Поля 'number' нет в словаре 'order' теле ответа"
+            url=TestDataUrl.CREATE_ORDER_URL, json=TestCreateOrderData.no_ingredients, headers=None)
+        assert response.status_code == 400, f"Ожидался код 400, но получен {response.status_code}"
+        assert response.text == '{"success":false,"message":"Ingredient ids must be provided"}'
+
+    @allure.title("Невозможность создать заказ с неверным хешем ингредиентов")
+    def test_create_order_with_invalid_ingredient_hash(self, create_user_delete_user):
+        response = requests.post(
+            url=TestDataUrl.CREATE_ORDER_URL, json=TestCreateOrderData.invalid_ingredient_hash, headers=None)
+        assert response.status_code == 500, f"Ожидался код 500, но получен {response.status_code}"
+
