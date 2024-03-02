@@ -1,10 +1,9 @@
-
 class TestDataUrl:
-    BASE_URL = ""
-    CREATE_USER_URL = "https://stellarburgers.nomoreparties.site/api/auth/register"
-    AUTHORIZATION_URL = "https://stellarburgers.nomoreparties.site/api/auth/login"
-    AUTH_USER_URL = "https://stellarburgers.nomoreparties.site/api/auth/user"
-    CREATE_ORDER_URL = "https://stellarburgers.nomoreparties.site/api/orders"
+    BASE_URL = "https://stellarburgers.nomoreparties.site/api/"
+    CREATE_USER_URL = f"{BASE_URL}auth/register"
+    AUTHORIZATION_URL = f"{BASE_URL}auth/login"
+    AUTH_USER_URL = f"{BASE_URL}auth/user"
+    CREATE_ORDER_URL = f"{BASE_URL}orders"
 
 
 class TestDataCreateUser:
@@ -41,5 +40,5 @@ class TestCreateOrderData:
         "ingredients": ["61c0c5a71d1fbdaaa70231324324244"]
     }
     no_ingredients = {
-        "ingredients": [""]
+        "ingredients": []
     }
