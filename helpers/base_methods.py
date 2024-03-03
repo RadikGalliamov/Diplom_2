@@ -20,7 +20,6 @@ class BaseApi:
             """
         except requests.RequestException as e:
             allure.attach(str(e), name="RequestException")  # Логируем ошибку
-            print(f"Ошибка при выполнении GET запроса: {e}")
             raise  # Перевызываем исключение для корректного отображения в отчете
         return response
 
@@ -40,7 +39,6 @@ class BaseApi:
             """
         except requests.RequestException as e:
             allure.attach(str(e), name="RequestException")  # Логируем ошибку
-            print(f"Ошибка при выполнении GET-ID запроса: {e}")
             raise  # Перевызываем исключение для корректного отображения в отчете
         return response
 
@@ -61,7 +59,6 @@ class BaseApi:
             """
         except requests.RequestException as e:
             allure.attach(str(e), name="RequestException")  # Логируем ошибку
-            print(f"Ошибка при выполнении POST запроса: {e}")
             raise  # Перевызываем исключение для корректного отображения в отчете
         return response
 
@@ -82,7 +79,6 @@ class BaseApi:
             """
         except requests.RequestException as e:
             allure.attach(str(e), name="RequestException")  # Логируем ошибку
-            print(f"Ошибка при выполнении PUT запроса: {e}")
             raise  # Перевызываем исключение для корректного отображения в отчете
         return response
 
@@ -100,7 +96,6 @@ class BaseApi:
             """
         except requests.RequestException as e:
             allure.attach(str(e), name="RequestException")  # Логируем ошибку
-            print(f"Ошибка при выполнении DELETE запроса: {e}")
             raise  # Перевызываем исключение для корректного отображения в отчете
         return response
 
@@ -121,7 +116,6 @@ class BaseApi:
             """
         except requests.RequestException as e:
             allure.attach(str(e), name="RequestException")  # Логируем ошибку
-            print(f"Ошибка при выполнении PUT запроса: {e}")
             raise  # Перевызываем исключение для корректного отображения в отчете
         return response
 
@@ -141,7 +135,6 @@ class BaseApi:
             :rtype: requests.Response
             """
         except requests.RequestException as e:
-            allure.attach(str(e), name="RequestException")  # Логируем ошибку
-            print(f"Ошибка при выполнении PATCH запроса: {e}")
+            allure.attach(f"Ошибка при выполнении метода POST {e}", name="RequestException")  # Логируем ошибку
             raise  # Перевызываем исключение для корректного отображения в отчете
         return response
