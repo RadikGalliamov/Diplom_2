@@ -19,7 +19,7 @@ class TestCreateOrder:
         assert response_raw.status_code == 200, f"Ожидался код 200, но получен {response_raw.status_code}"
         assert response_raw.text == f'{{"success":true,"name":"{name}","order":{{"number":{order_number}}}}}'
 
-    @allure.title("Cоздание заказа без ингредиентами не авторизированным пользователем")
+    @allure.title("Cоздание заказа без ингредиентов не авторизированным пользователем")
     def test_create_order_with_ingredients(self):
         order_helpers = OrdersHelpers()
         response_raw = order_helpers.create_order_no_ingredient()
