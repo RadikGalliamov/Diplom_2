@@ -1,5 +1,4 @@
 import allure
-
 from conftest import create_user_delete_user
 from data import TestDataUrl, TestDataLogin, TestDataCreateUser
 from helpers.base_methods import BaseApi
