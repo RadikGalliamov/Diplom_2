@@ -1,8 +1,8 @@
 import allure
 from conftest import create_user_delete_user
-from data import TestDataUrl, TestDataLogin, TestDataCreateUser
+from data import TestDataUrl, TestDataLogin, TestDataUser
 from helpers.base_methods import BaseApi
-from helpers.helpers import CreateUser
+from helpers.helpers import User
 
 
 class UserHelpers(BaseApi):
@@ -49,16 +49,18 @@ class UserHelpers(BaseApi):
     @allure.step("Создание уникального пользователя в системе")
     def create_user(self):
         try:
-            random_user = CreateUser.create_user()
+            random_user = User.create_user()
             return random_user
         except Exception as e:
             allure.attach(f"Ошибка при получении списка заказов: {e}", name="RequestException")
             raise
 
     @allure.step("Регистрация пользователя в системе")
-    def reg_user(self, token=None):
+    def reg_user(self, json=None, token=None):
         try:
-            return self.post(url=self.create_user_url, json=self.create_user(), token=token)
+            if json is None:
+                json = self.create_user()
+            return self.post(url=self.create_user_url, json=json, token=token)
         except Exception as e:
             allure.attach(f"Ошибка при регистрации пользователя в системе: {e}", name="RequestException")
             raise
@@ -78,7 +80,7 @@ class UserHelpers(BaseApi):
     def reg_user_without_one_need_field(self, token=None):
         try:
             return self.post(
-                url=self.create_user_url, json=TestDataCreateUser.create_user_without_one_required_field, token=token)
+                url=self.create_user_url, json=TestDataUser.create_user_without_one_required_field, token=token)
         except Exception as e:
             allure.attach(
                 f"Ошибка при регистрация пользователя в системе без одного из обязательных полей: {e}", name="RequestException")
@@ -87,7 +89,7 @@ class UserHelpers(BaseApi):
     @allure.step("Изменение данных авторизованного пользователя в системе")
     def patch_user_data(self, create_user_delete_user):
         try:
-            data_for_update = CreateUser.user_update()
+            data_for_update = User.user_update()
             access_token = create_user_delete_user[2]
             return self.patch(url=self.changing_data_user_url, json=data_for_update, token=access_token)
         except Exception as e:
@@ -98,7 +100,7 @@ class UserHelpers(BaseApi):
     @allure.step("Изменение данных авторизованного пользователя в системе без токена")
     def patch_user_data_without_token(self):
         try:
-            data_for_update = CreateUser.user_update()
+            data_for_update = User.user_update()
             return self.patch(url=self.changing_data_user_url, json=data_for_update, token=None)
         except Exception as e:
             allure.attach(

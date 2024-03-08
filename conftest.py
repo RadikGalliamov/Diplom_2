@@ -1,13 +1,13 @@
 import pytest
 import requests
 from data import TestDataUrl
-from helpers.helpers import CreateUser
+from helpers.helpers import User
 
 
 @pytest.fixture
 def create_user_delete_user():
     try:
-        new_user = CreateUser.create_user()
+        new_user = User.create_user()
         response = requests.post(url=TestDataUrl.CREATE_USER_URL, data=new_user)
         response.raise_for_status()  # Проверяем статус ответа
         access_token = response.json().get("accessToken")  # Получаем токен доступа, если он есть

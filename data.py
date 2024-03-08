@@ -1,12 +1,30 @@
+import random
+import string
+
+
+def generate_random_string(length=10):
+    letters = string.ascii_lowercase
+    random_string = ''.join(random.choice(letters) for _ in range(length))
+    return random_string
+
+
+def generate_email():
+    login = ''.join(random.choice(string.ascii_lowercase) for _ in range(6))
+    domain = random.choice(['ya.ru', 'yandex.ru', 'mail.ru', 'gmail.com'])
+    email = login + '@' + domain
+    return email
+
+
 class TestDataUrl:
     BASE_URL = "https://stellarburgers.nomoreparties.site/api/"
     CREATE_USER_URL = f"{BASE_URL}auth/register"
     AUTHORIZATION_URL = f"{BASE_URL}auth/login"
     AUTH_USER_URL = f"{BASE_URL}auth/user"
     CREATE_ORDER_URL = f"{BASE_URL}orders"
+    DELETE_USER_URL = f"{CREATE_USER_URL}/user"
 
 
-class TestDataCreateUser:
+class TestDataUser:
     user_exist = {
         "email": "user_for_stellar@yandex.ru",
         "password": "12345678",
@@ -18,6 +36,20 @@ class TestDataCreateUser:
         "password": "12345678",
         "name": "Userfortest2024"
     }
+
+    @staticmethod
+    def generate_random_string(length=10):
+        letters = string.ascii_lowercase
+        random_string = ''.join(random.choice(letters) for _ in range(length))
+        return random_string
+
+    @staticmethod
+    def generate_email():
+        login = ''.join(random.choice(string.ascii_lowercase) for _ in range(6))
+        domain = random.choice(['ya.ru', 'yandex.ru', 'mail.ru', 'gmail.com'])
+
+        email = login + '@' + domain
+        return email
 
 
 class TestDataLogin:

@@ -2,10 +2,17 @@ import allure
 from faker import Faker
 
 
-class CreateUser:
-    @staticmethod
+class User:
+    def __init__(self, email=None, password=None, name=None):
+        self.data = {
+            'email': email,
+            'password': password,
+            'name': name
+        }
+
+    @classmethod
     @allure.step("Создать рандомного пользователя")
-    def create_user():
+    def create_user(cls):
         fake = Faker()
         user_random = {
             "email": fake.email(),
@@ -14,9 +21,9 @@ class CreateUser:
         }
         return user_random
 
-    @staticmethod
+    @classmethod
     @allure.step("Создать данные для обновления")
-    def user_update():
+    def user_update(cls):
         fake = Faker()
         user_update = {
             "email": fake.email(),
