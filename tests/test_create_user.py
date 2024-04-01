@@ -1,32 +1,39 @@
 import allure
+import pytest
+
+from helpers.check_functions import CheckUser
+from helpers.helpers import User
 from helpers.user_helpers import UserHelpers
+from data import TestDataUser as dtu
 
 
 class TestUserRegistration:
     @allure.title("Создание пользователя")
     def test_create_uniq_user(self):
-        user_helpers = UserHelpers()
-        response_raw = user_helpers.reg_user()
-        email = response_raw.json()["user"]["email"]
-        name = response_raw.json()["user"]["name"]
-        access_token = response_raw.json()["accessToken"]
-        refresh_token = response_raw.json()["refreshToken"]
-        assert response_raw.status_code == 200, f"Запрос с ошибкой, статус код {response_raw.status_code}"
-        assert response_raw.text == f'{{"success":true,"user":{{"email":"{email}","name":"{name}"}},' \
-                                f'"accessToken":"{access_token}","refreshToken":"{refresh_token}"}}'
+        random_user = User.create_user()
+        response_raw = UserHelpers().reg_user(json=random_user)
+        check_response = CheckUser(status_code=200, email=random_user["email"], name=random_user["name"])
+        check_response.check_status_code(response=response_raw)
+        check_response.assert_schema_is_valid(
+            response=response_raw.json(), schema=check_response.body_user_schema())
 
     @allure.title("Регистрация пользователя, который уже зарегистрирован")
     def test_creating_user_who_is_already_registered(self):
-        user_helpers = UserHelpers()
-        response_raw = user_helpers.reg_exist_user()
-        assert response_raw.status_code == 403, f"Запрос с ошибкой, статус код {response_raw.status_code}"
-        assert response_raw.json()[
-                   "message"] == "User already exists", f"Текст сообщения {response_raw.json()['message']} не соответствует ожидаемому"
+        response_raw = UserHelpers().reg_exist_user()
+        check_response = CheckUser(status_code=403, error_msg="User already exists")
+        check_response.check_status_code(response_raw)
+        check_response.assert_schema_is_valid(
+            response=response_raw.json(), schema=check_response.body_user_schema())
 
-    @allure.title("Регистрация пользователя, и не заполнение одного из обязательных полей.")
-    def test_creating_user_and_not_filling_out_one_field(self):
-        user_helpers = UserHelpers()
-        response_raw = user_helpers.reg_user_without_one_need_field()
-        assert response_raw.status_code == 403, f"Запрос с ошибкой, статус код {response_raw.status_code}"
-        assert response_raw.json()[
-                   "message"] == "Email, password and name are required fields", f"Текст сообщения {response_raw.json()['message']} не соответствует ожидаемому"
+    @allure.title("Создание пользователя без обязательных полей")
+    @pytest.mark.parametrize("email, password, name", [[None, dtu.generate_email(), dtu.generate_random_string(4)],
+                                                       [dtu.generate_email(), None, dtu.generate_random_string(4)],
+                                                       [dtu.generate_email(), dtu.generate_random_string(), None]],
+                             ids=["Empty email", "Empty password", "Empty name"])
+    def test_create_user_with_empty_fields(self, email, password, name):
+        user = User(email, password, name)
+        response_raw = UserHelpers().reg_user(json=user.data)
+        check_response = CheckUser(status_code=403, error_msg="Email, password and name are required fields")
+        check_response.check_status_code(response=response_raw)
+        check_response.assert_schema_is_valid(
+            response=response_raw.json(), schema=check_response.body_user_schema())

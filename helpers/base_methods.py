@@ -84,7 +84,7 @@ class BaseApi:
 
     @staticmethod
     @allure.title("DELETE")
-    def delete(url: str, id: str, token: str = None) -> requests.Response:
+    def delete(url: str, id: str = None, token: str = None) -> requests.Response:
         try:
             response = requests.delete(f"{url}{id}", headers={"Authorization": token})
             r"""Sends a DELETE request.
