@@ -1,10 +1,10 @@
 import allure
 import pytest
 
-from helpers.check_functions import CheckUser
+from checks.check_functions import CheckUser
 from helpers.helpers import User
 from helpers.user_helpers import UserHelpers
-from data import TestDataUser as dtu
+from data.data import TestDataUser as dtu
 
 
 class TestUserRegistration:
@@ -17,13 +17,15 @@ class TestUserRegistration:
         check_response.assert_schema_is_valid(
             response=response_raw.json(), schema=check_response.body_user_schema())
 
+
+class TestUserRegistrationNegative:
     @allure.title("Регистрация пользователя, который уже зарегистрирован")
     def test_creating_user_who_is_already_registered(self):
         response_raw = UserHelpers().reg_exist_user()
         check_response = CheckUser(status_code=403, error_msg="User already exists")
         check_response.check_status_code(response_raw)
         check_response.assert_schema_is_valid(
-            response=response_raw.json(), schema=check_response.body_user_schema())
+            response=response_raw.json(), schema=check_response.error_user_already_exists_shema())
 
     @allure.title("Создание пользователя без обязательных полей")
     @pytest.mark.parametrize("email, password, name", [[None, dtu.generate_email(), dtu.generate_random_string(4)],
@@ -36,4 +38,4 @@ class TestUserRegistration:
         check_response = CheckUser(status_code=403, error_msg="Email, password and name are required fields")
         check_response.check_status_code(response=response_raw)
         check_response.assert_schema_is_valid(
-            response=response_raw.json(), schema=check_response.body_user_schema())
+            response=response_raw.json(), schema=check_response.error_not_field_shema())
