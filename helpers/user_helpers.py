@@ -1,21 +1,19 @@
 import allure
 from conftest import create_user_delete_user
-from data import TestDataUrl, TestDataLogin, TestDataUser
+from data.data import TestDataUrl, TestDataLogin, TestDataUser
 from helpers.base_methods import BaseApi
 from helpers.helpers import User
 
 
 class UserHelpers(BaseApi):
-    def __init__(self):
-        super().__init__()
-        self.users_url = TestDataUrl.AUTHORIZATION_URL
-        self.create_user_url = TestDataUrl.CREATE_USER_URL
-        self.changing_data_user_url = TestDataUrl.AUTH_USER_URL
+    users_url = TestDataUrl.AUTHORIZATION_URL
+    create_user_url = TestDataUrl.CREATE_USER_URL
+    changing_data_user_url = TestDataUrl.AUTH_USER_URL
 
     @allure.step("Авторизация пользователя")
     def auth_user(self, data=None, token=None):
         try:
-            return self.post(url=self.users_url, json=data, token=token)
+            return self.post(url=UserHelpers.users_url, json=data, token=token)
         except Exception as e:
             allure.attach(f"Ошибка при получении списка заказов: {e}", name="RequestException")
             raise
@@ -23,7 +21,7 @@ class UserHelpers(BaseApi):
     @allure.step("Авторизация c неверным логином")
     def auth_user_without_invalid_login(self, token=None):
         try:
-            return self.post(url=self.users_url, json=TestDataLogin.user_does_not_exist, token=token)
+            return self.post(url=UserHelpers.users_url, json=TestDataLogin.user_does_not_exist, token=token)
         except Exception as e:
             allure.attach(f"Ошибка при получении списка заказов: {e}", name="RequestException")
             raise
@@ -31,7 +29,7 @@ class UserHelpers(BaseApi):
     @allure.step("Авторизация c неверным логином и неверным паролем")
     def auth_user_without_invalid_login_and_password(self, token=None):
         try:
-            return self.post(url=self.users_url, json=TestDataLogin.valid_user_with_incorrect_password, token=token)
+            return self.post(url=UserHelpers.users_url, json=TestDataLogin.valid_user_with_incorrect_password, token=token)
         except Exception as e:
             allure.attach(f"Ошибка при получении списка заказов: {e}", name="RequestException")
             raise
@@ -60,7 +58,7 @@ class UserHelpers(BaseApi):
         try:
             if json is None:
                 json = self.create_user()
-            return self.post(url=self.create_user_url, json=json, token=token)
+            return self.post(url=UserHelpers.create_user_url, json=json, token=token)
         except Exception as e:
             allure.attach(f"Ошибка при регистрации пользователя в системе: {e}", name="RequestException")
             raise
@@ -69,8 +67,8 @@ class UserHelpers(BaseApi):
     def reg_exist_user(self, token=None):
         try:
             add_user = self.create_user()
-            self.post(url=self.create_user_url, json=add_user, token=token)
-            return self.post(url=self.create_user_url, json=add_user, token=token)
+            self.post(url=UserHelpers.create_user_url, json=add_user, token=token)
+            return self.post(url=UserHelpers.create_user_url, json=add_user, token=token)
         except Exception as e:
             allure.attach(
                 f"Ошибка при регистрации пользователя уже существующего в системе: {e}", name="RequestException")
@@ -80,18 +78,19 @@ class UserHelpers(BaseApi):
     def reg_user_without_one_need_field(self, token=None):
         try:
             return self.post(
-                url=self.create_user_url, json=TestDataUser.create_user_without_one_required_field, token=token)
+                url=UserHelpers.create_user_url, json=TestDataUser.create_user_without_one_required_field, token=token)
         except Exception as e:
             allure.attach(
-                f"Ошибка при регистрация пользователя в системе без одного из обязательных полей: {e}", name="RequestException")
+                f"Ошибка при регистрация пользователя в системе без одного из обязательных полей: {e}",
+                name="RequestException")
             raise
 
     @allure.step("Изменение данных авторизованного пользователя в системе")
-    def patch_user_data(self, create_user_delete_user):
+    def patch_user_data(self, token):
         try:
             data_for_update = User.user_update()
-            access_token = create_user_delete_user[2]
-            return self.patch(url=self.changing_data_user_url, json=data_for_update, token=access_token)
+            access_token = token[2]
+            return self.patch(url=UserHelpers.changing_data_user_url, json=data_for_update, token=access_token)
         except Exception as e:
             allure.attach(
                 f"Ошибка при изменение данных авторизованного пользователя в системе: {e}", name="RequestException")
@@ -101,8 +100,9 @@ class UserHelpers(BaseApi):
     def patch_user_data_without_token(self):
         try:
             data_for_update = User.user_update()
-            return self.patch(url=self.changing_data_user_url, json=data_for_update, token=None)
+            return self.patch(url=UserHelpers.changing_data_user_url, json=data_for_update, token=None)
         except Exception as e:
             allure.attach(
-                f"Ошибка при изменение данных авторизованного пользователя в системе без токена: {e}", name="RequestException")
+                f"Ошибка при изменение данных авторизованного пользователя в системе без токена: {e}",
+                name="RequestException")
             raise

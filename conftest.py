@@ -1,10 +1,10 @@
 import pytest
 import requests
-from data import TestDataUrl
+from data.data import TestDataUrl
 from helpers.helpers import User
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def create_user_delete_user():
     try:
         new_user = User.create_user()

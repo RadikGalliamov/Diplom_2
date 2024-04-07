@@ -20,8 +20,9 @@ class TestDataUrl:
     CREATE_USER_URL = f"{BASE_URL}auth/register"
     AUTHORIZATION_URL = f"{BASE_URL}auth/login"
     AUTH_USER_URL = f"{BASE_URL}auth/user"
-    CREATE_ORDER_URL = f"{BASE_URL}orders"
+    ORDERS_URL = f"{BASE_URL}orders"
     DELETE_USER_URL = f"{CREATE_USER_URL}/user"
+    INGREDIENTS_URL = f'{BASE_URL}ingredients'
 
 
 class TestDataUser:
@@ -65,12 +66,6 @@ class TestDataLogin:
 
 
 class TestCreateOrderData:
-    ingredients = {
-        "ingredients": ["61c0c5a71d1f82001bdaaa70", "61c0c5a71d1f82001bdaaa6e"]
-    }
-    invalid_ingredient_hash = {
-        "ingredients": ["61c0c5a71d1fbdaaa70231324324244"]
-    }
-    no_ingredients = {
-        "ingredients": []
-    }
+    ingredients = ["61c0c5a71d1f82001bdaaa70", "61c0c5a71d1f82001bdaaa6e"]
+    invalid_ingredient_hash = ["61c0c5a71d1fbdaaa70231324324244"]
+    no_ingredients = []

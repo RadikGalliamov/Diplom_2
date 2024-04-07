@@ -1,5 +1,8 @@
+import random
 import allure
 from faker import Faker
+from data.data import TestDataUrl
+from helpers.base_methods import BaseApi
 
 
 class User:
@@ -30,3 +33,6 @@ class User:
             "name": fake.user_name()
         }
         return user_update
+
+
+
