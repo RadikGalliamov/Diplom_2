@@ -1,10 +1,12 @@
 import allure
+import pytest
 from conftest import create_user_delete_user
 from checks.check_functions import CheckOrder
 from helpers.orders_helpers import OrdersHelpers
 
 
 class TestCreateOrder:
+    @pytest.mark.development
     @allure.title("Cоздание заказа авторизированным пользователем")
     def test_create_order_with_authorization(self, create_user_delete_user):
         access_token = create_user_delete_user[2]
